@@ -1,3 +1,6 @@
+
+
+
 /******************************************************************************
 
            **       *****      *****
@@ -22,15 +25,20 @@
         Grupo: Eleven
         Alumnos: 
         - Chirdo, Nicolas Andres           nchirdo@hotmail.com
-        - Díaz, Orlando                    ojose89@gmail.com
-        - Fernández, Florencia             florenciafernandezasconape@gmail.com
-        - jiménez, Matías                  matias.jimenez.0096@gmail.com
+        - Días, Orlando                    ojose89@gmail.com
+        - Fernandez, Florencia             florenciafernandezasconape@gmail.com
+        - jiménez, Matías
         Division: 1 F
                 ---- Primer cuatrimestre 2022 ----
         
         Fecha de entrega 04/05/2022
 
 ******************************************************************************/
+
+
+
+
+
 /*
  *	Trabajo Práctico 1: Cronómetro Binario
  *
@@ -62,7 +70,22 @@
  *	documentar cada función creada en el código. 
  *	Un breve comentario que diga que es lo que hace esa función
  *  y de corresponder, que retorna).
-      
+      UNIVERSIDAD TECNOLOGICA NACIONAL
+                Facultad Regional Avellaneda
+                Tecnicatura Superior en Programación
+                
+        Asignatura: Sistema de Procesamiento de Datos.
+        
+        Grupo: Eleven
+        Alumnos: 
+        - Chirdo, Nicolas Andres
+        - Díaz, Orlando
+        - Fernández, Florencia
+        - jiménez, Matías
+        Division: 1 F
+                ---- Primer cuatrimestre 2022 ----
+        
+        Fecha de entrega 04/05/2022
 */
 
 //--- Defines ---//
@@ -73,8 +96,7 @@
 #define TAM 10
 #define BOTON_RESET 2
 #define BOTON_PAUSA 3
-#define TIME 1000
-//Secods expresed in miliseconds
+#define TIME 255				//Secods expresed in miliseconds
 //--- End Defines ---//
 //\brief configura los pins como salida  
 //\param variable PRIMER_LED
@@ -177,15 +199,13 @@ void Secuencia(int array[])
 		if (flagPausa == HIGH)
 		{
 			contador++;
-             Serial.print("\n \n*** Decimal ***|*** Binario ***\n \n");
-             Serial.print("       ");
 			Serial.print(contador - 1);
-			Serial.print("          ");
+			Serial.print("   ");
 			for (int i = 0; i < TAM; i++)
 			{
 				Serial.print(arrayEnteros[i]);
 			}
-			
+			Serial.print("\n");
 			IterarLeds(arrayEnteros, ultimoIndice);
 			millis_antes = millisAhora;
 		}
