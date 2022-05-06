@@ -9,4 +9,4 @@
         Division: 1 F
 
 LINK DEL TP: 
-https://www.tinkercad.com/things/eBACcexC1de
+https://www.tinkercad.com/things/9OkHlN1Ubjp
