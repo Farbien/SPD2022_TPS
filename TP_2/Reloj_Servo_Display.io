@@ -52,8 +52,7 @@ Servo servo_horas;
 Servo servo_min;
 Servo servo_seg;
 
-
-    /****************************PROTOTIPOS*************************/
+/****************************PROTOTIPOS*************************/
 void ImprimirSegundos();
 void ImprimirMinutos();
 void ImprimirHoras();
@@ -65,11 +64,12 @@ void CorrerElTiempo();
 void PosicionarServo();
 
 void ImprimirReloj();
+void ParpadearDosPuntitos();
 /****************************PROTOTIPOS*************************/
 
 void setup()
 {
-	
+
 	Serial.begin(9600);
 	servo_horas.attach(8);
 	servo_min.attach(9);
@@ -77,17 +77,20 @@ void setup()
 	lcd.begin(16, 2);
 	lcd.print("    Horario");
 	lcd.setCursor(4, 1);
-	lcd.print("00:00:00");
+	
 
 }
 /************************VARIABLES GLOBALES********************/
 unsigned long millis_antes = 0;
+unsigned long millis_antes2 = 0;
 int flagPausa = HIGH;
+
 
 //CONTADORES
 int contadorSeg = 55;
 int contadorMin = 59;
 int contadorHora = 23;
+int contadorDosPuntitos = 0;
 //BOTONES
 int botonAntes = NO_BOTON;
 /************************VARIABLES GLOBALES********************/
@@ -95,6 +98,8 @@ int botonAntes = NO_BOTON;
 /****************************FUNCIONES*************************/
 
 //\Brief funcion para imprimir segundos en el display. 
+//\param recibe contadores declarados en variables globales
+//\return no  devuelve ningún valor de retorno 
 void ImprimirSegundos()
 {
 	//seg
@@ -114,11 +119,12 @@ void ImprimirSegundos()
 	{
 		lcd.setCursor(10, 1);
 		lcd.print(contadorSeg);
-
 	}
 }
 
 //\Brief funcion para imprimir minutos en el display.
+//\param recibe contadores declarados en variables globales
+//\return no  devuelve ningún valor de retorno 
 void ImprimirMinutos()
 {
 	//min
@@ -138,11 +144,12 @@ void ImprimirMinutos()
 	{
 		lcd.setCursor(7, 1);
 		lcd.print(contadorMin);
-
 	}
 }
 
 //\Brief funcion para imprimir horas en el display
+//\param recibe contadores declarados en variables globales
+//\return no  devuelve ningún valor de retorno 
 void ImprimirHoras()
 {
 	//horas
@@ -164,11 +171,12 @@ void ImprimirHoras()
 	}
 }
 
-//Brief leer el valor analogico de los botones.
-//Retorno Retorna el Boton presionado.
+//\Brief leer el valor analogico de los botones (entrada A0)
+//\param recibe contadores declarados en variables globales.
+//\return devuelve el boton presionado. 
 int LeerBoton()
 {
-  int valorA0 = analogRead(A0);
+	int valorA0 = analogRead(A0);
 	valorA0 = analogRead(A0);
 
 	if (valorA0 > 502 && valorA0 < 522)
@@ -181,15 +189,15 @@ int LeerBoton()
 		return BOTON_HORA;
 
 	if (valorA0 > 808 && valorA0 < 828)
-		
+
 		return BOTON_PAUSA;
-	
 
 	return NO_BOTON;
 }
 
-
 //\Brief invocar a las funciones que imprimen en eñ display.
+//\param funciones de imprimir en display el tiempo.
+//\return no devuelve ningún valor de retorno. 
 void ImprimirReloj()
 {
 	ImprimirSegundos();
@@ -197,10 +205,11 @@ void ImprimirReloj()
 	ImprimirHoras();
 }
 
-// Brief asignar funciones al reloj
+//\Brief asignar funciones a los botones.
+//\param funcion LeerBoton().
+//\return no devuelve ningún valor de retorno. 
 void FuncBotones()
 {
-  
 	int botonAhora = LeerBoton();
 
 	if (botonAhora != NO_BOTON && botonAhora != botonAntes)
@@ -220,36 +229,47 @@ void FuncBotones()
 			contadorHora++;
 			break;
 		case BOTON_PAUSA:
-          	if(flagPausa){
+			if (flagPausa)
+			{
 				Serial.println("...:::   pausa     :::...");
-            }
-          else
-          {
-            Serial.println("...:::   Inicio    :::...");
-          }
-          	flagPausa=!flagPausa;
+			}
+			else
+			{
+				Serial.println("...:::   Inicio    :::...");
+			}
+			flagPausa = !flagPausa;
 			break;
 		}
 	}
 	botonAntes = botonAhora;
 }
 
-//Brief Funcion para iniciar tiempo.
+//\Brief Funcion para iniciar tiempo.
+//\param recibe contadores declarados en variables globales.
+//\return no devuelve ningún valor de retorno. 
 void CorrerElTiempo()
-{
-	
-	unsigned long millisAhora = millis();
-	if (flagPausa)
 	{
-		if (millisAhora - millis_antes >= TIME)
+
+		unsigned long millisAhora = millis();
+		if (flagPausa)
 		{
-			contadorSeg++;
-          millis_antes = millisAhora;
+			if (millisAhora - millis_antes2 >= TIME / 2)
+			{
+				contadorDosPuntitos++;
+				millis_antes2 = millisAhora;
+			}
+
+			if (millisAhora - millis_antes >= TIME)
+			{
+				contadorSeg++;
+				millis_antes = millisAhora;
+			}
 		}
 	}
-}
 
-//Brief Funcion para posicionar los servomotores
+//\Brief Funcion para posicionar los servomotores.
+//\param recibe contadores declarados en variables globales.
+//\return no devuelve ningún valor de retorno. 
 void PosicionarServo()
 {
 	int posicionServoSeg = map(contadorSeg, 0, 59, 180, 0);
@@ -261,13 +281,51 @@ void PosicionarServo()
 	int posicionServoHoras = map(contadorHora, 0, 23, 180, 0);
 	servo_horas.write(posicionServoHoras);
 }
-
+  
+//\Brief Funcion para dar intermitencia a los signos separadores
+  // de las variables de tiempo impresas en el display.
+//\param recibe variables declaradas globalmente.
+//\return no devuelve ningún valor de retorno. 
+void ParpadearDosPuntitos()
+{
+	if (!flagPausa)
+	{
+		lcd.setCursor(6, 1);
+		lcd.print(":");
+		lcd.setCursor(9, 1);
+		lcd.print(":");
+	}
+	else if (contadorDosPuntitos % 2 == 0)
+	{
+		lcd.setCursor(6, 1);
+		lcd.print(":");
+		lcd.setCursor(9, 1);
+		lcd.print(":");
+	}
+	else
+	{
+		lcd.setCursor(6, 1);
+		lcd.print(" ");
+		lcd.setCursor(9, 1);
+		lcd.print(" ");
+	}
+}
 /****************************FUNCIONES*************************/
 
 /****************************Loop*************************/
+  
+//\Brief Funcion cuyo emergente sistemico es el funcionamiento
+  // total del reloj.
+//\param funcion ParpadearDosPuntitos();
+//\param funcion PosicionarServo();
+//\param funcion CorrerElTiempo();
+//\param funcion FuncBotones();
+//\param funcion ImprimirReloj();
+//\return no devuelve ningún valor de retorno.  
 void loop()
 {
 
+	ParpadearDosPuntitos();
 	PosicionarServo();
 	CorrerElTiempo();
 	FuncBotones();
@@ -275,4 +333,5 @@ void loop()
 
 	delay(7);
 }
+
 /****************************Loop*************************/
