@@ -8,5 +8,8 @@
         - jiménez, Matías                  matias.jimenez.0096@gmail.com
         Division: 1 F
 
-LINK DEL TP: 
+LINK DEL TP 1: 
 https://www.tinkercad.com/things/9OkHlN1Ubjp
+
+LINK DEL TP 2: 
+https://www.tinkercad.com/things/kmKFDJFLY9R
